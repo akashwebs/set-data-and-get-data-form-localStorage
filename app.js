@@ -3,14 +3,23 @@ const getInputValue = idName => {
     return document.getElementById(idName).value;
 }
 
+
+// get data form loaclStorage
+const displayDataFormLoacl = () => {
+    const response = JSON.parse(localStorage.getItem('bookStore'));
+    response.forEach(e => {
+        displayBookAndPrice(e.bookName, e.price);
+    })
+}
+
 document.getElementById('send-button').addEventListener('click', () => {
 
     const bookName = getInputValue('book-name-input');
     const priceInput = parseInt(getInputValue('input-price'));
     displayBookAndPrice(bookName, priceInput);
+    getItemFromLocalSt(bookName, priceInput);
 
     // get data with parse object from loaclsotre fn call
-    getItemFromLocalSt();
 
 });
 let count = 0;
@@ -24,29 +33,18 @@ const displayBookAndPrice = (bookName, price) => {
         <td><button onclick='rmvProduct(event)' class="btn btn-danger">Remove</button></td>
     `
     productList.appendChild(tr);
-    setDataToLocalStorage(bookName, price);
 
 }
 const rmvProduct = event => {
     event.target.parentNode.parentNode.remove()
 }
 
-const getItemFromLocalSt = () => {
-    const getDataFromLocal = localStorage.getItem('bookStore');
-    let bookStore;
-    if (!getDataFromLocal) {
-        bookStore = {};
-    } else {
-        bookStore = JSON.parse(getDataFromLocal);
+const getItemFromLocalSt = (name, price) => {
+
+        let bookStore = JSON.parse(localStorage.getItem("bookStore") || "[]");
+        bookStore.push({ bookName: name, price: price })
+        const strinfyData = JSON.stringify(bookStore);
+        localStorage.setItem('bookStore', strinfyData);
     }
-    return bookStore;
-
-}
-
-const setDataToLocalStorage = (name, price) => {
-    const getObjectFromLocal = getItemFromLocalSt();
-    getObjectFromLocal[name] = price;
-    const strinfyData = JSON.stringify(getObjectFromLocal);
-    localStorage.setItem('bookStore', strinfyData);
-
-}
+    //   fetch data from loaclstorage
+displayDataFormLoacl();
